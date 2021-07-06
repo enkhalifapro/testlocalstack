@@ -9,7 +9,7 @@ import (
 
 type MyEvent struct {
 	Name string `json:"What is your name?"`
-	Age int     `json:"How old are you?"`
+	Age  int    `json:"How old are you?"`
 }
 
 type MyResponse struct {
@@ -17,7 +17,6 @@ type MyResponse struct {
 }
 
 func HandleLambdaEvent(event MyEvent) (MyResponse, error) {
-
 	/*topic,err:= pkg.CreateSNSTopic("topicSLS")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -32,24 +31,28 @@ func HandleLambdaEvent(event MyEvent) (MyResponse, error) {
 		fmt.Println(err.Error())
 	}
 	fmt.Println(qUrl)*/
-	qArn:="arn:aws:sqs:us-east-1:000000000000:myQueue"
-	topic:="arn:aws:sns:us-east-1:000000000000:topicSLS"
-	sArn,err:=pkg.SubscribeToSNSTopic(qArn,topic)
+	qArn := "arn:aws:sqs:us-east-1:000000000000:myQueue"
+	topic := "arn:aws:sns:us-east-1:000000000000:topicSLS"
+	sArn, err := pkg.SubscribeToSNSTopic(qArn, topic)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 	fmt.Println(sArn)
 
-
-	messageId,err:=pkg.PublishToSNSTopic(topic,fmt.Sprintf("message in time %v",time.Now().Unix()))
-	if err != nil {
-		fmt.Println(err.Error())
+	for i := 0; i < 10; i++ {
+		messageId, err := pkg.PublishToSNSTopic(topic, fmt.Sprintf("message in time cccc %v", time.Now().Unix()))
+		if err != nil {
+			fmt.Println("errrrrr")
+			fmt.Println(err)
+		}
+		fmt.Println("sennnnnnnndddddd")
+		fmt.Println(messageId)
+		time.Sleep(1 * time.Second)
 	}
-	fmt.Println(messageId)
+
 	return MyResponse{Message: topic}, nil
 }
 
 func main() {
 	lambda.Start(HandleLambdaEvent)
 }
-

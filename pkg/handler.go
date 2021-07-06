@@ -186,7 +186,7 @@ func SubscribeToSNSTopic(qUrl string,topicARN string) (string,error) {
 		TopicArn:              &topicARN,
 	}
 
-	result, err := SubscribeTopic(context.TODO(), snsClient, input)
+	result, err := SubscribeTopic(context.Background(), snsClient, input)
 	if err != nil {
 		return "",err
 	}

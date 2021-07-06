@@ -21,7 +21,6 @@ service: publishsns-serverless
 frameworkVersion: '2'
 
 plugins:
-  - serverless-offline
   - serverless-localstack
 
 custom:
@@ -90,11 +89,10 @@ functions:
   publisher:
     handler: /bin/publishsns
     events:
-      - schedule: rate(0.5 minutes)
+      - schedule: rate(1 minute)
   recievemsg:
     handler: /bin/recivemsg
     events:
-      - schedule: rate(0.6 minutes)
       - sqs:
           arn:
             Fn::GetAtt:

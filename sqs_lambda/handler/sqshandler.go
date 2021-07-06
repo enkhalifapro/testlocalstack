@@ -7,7 +7,6 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/sqs"
-	"github.com/aws/aws-sdk-go-v2/service/sqs/types"
 	"log"
 	"os"
 )
@@ -18,7 +17,6 @@ var (
 
 	sqsClient *sqs.Client
 )
-
 
 type SQSReceiveMessageAPI interface {
 	GetQueueUrl(ctx context.Context,
@@ -43,8 +41,8 @@ func GetMessages(c context.Context, api SQSReceiveMessageAPI, input *sqs.Receive
 }
 
 func init() {
-	awsRegion ="us-east-1"// os.Getenv("AWS_REGION")
-	awsEndpoint =os.Getenv("LOCALSTACK_HOSTNAME")
+	awsRegion = "us-east-1" // os.Getenv("AWS_REGION")
+	awsEndpoint = os.Getenv("LOCALSTACK_HOSTNAME")
 
 	customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
 		if awsEndpoint != "" {
@@ -66,18 +64,17 @@ func init() {
 		log.Fatalf("Cannot load the AWS configs: %s", err)
 	}
 
-fmt.Println("==========================")
+	fmt.Println("==========================")
 	fmt.Println("initialize sqs .....")
-
 
 	sqsClient = sqs.NewFromConfig(awsCfg)
 	fmt.Println("==========================")
 }
 
+func RecieveMessage(queue string, timeout int) (string, error) {
 
-func RecieveMessage(queue string,timeout int) (string,error) {
 	if queue == "" {
-		return "",errors.New("You must supply the name of a queue")
+		return "", errors.New("You must supply the name of a queue")
 	}
 	if timeout < 0 {
 		timeout = 0
@@ -88,30 +85,41 @@ func RecieveMessage(queue string,timeout int) (string,error) {
 	}
 
 	// Get URL of queue
-	gMInput := &sqs.ReceiveMessageInput{
+	timeout = 0
+	/*gMInput := &sqs.ReceiveMessageInput{
 		MessageAttributeNames: []string{
 			string(types.QueueAttributeNameAll),
 		},
 		QueueUrl:            &queue,
 		MaxNumberOfMessages: 5,
 		VisibilityTimeout:   int32(timeout),
-	}
+	}*/
 	fmt.Println("\nstart reading message from sqs\n")
-	msgResult, err := GetMessages(context.TODO(), sqsClient, gMInput)
+	//ctx := context.Background()
 
+	/*for {
+
+		time.Sleep(500 * time.Millisecond)
+	}*/
+
+	/*msgResult, err := sqsClient.ReceiveMessage(ctx, gMInput)
 	if err != nil {
 		fmt.Println("Got an error receiving messages:")
 		fmt.Println(err)
-		return "",err
+		return "", err
 	}
-	fmt.Println("\n *** result *** \n")
-	fmt.Println(msgResult)
-	fmt.Println("\n==== Messages count====\n")
 
-	fmt.Println(len(msgResult.Messages))
-	fmt.Println("\n==== End Messages====\n")
-	return *msgResult.Messages[0].MessageId,nil
+	fmt.Println("reciiiiiveee   xxxxxxxxxxxx")
+	if len(msgResult.Messages) > 0 {
+		fmt.Println("fouuuuuuuund")
+		fmt.Println(len(msgResult.Messages))
+		fmt.Println(msgResult.Messages[0].MessageId)
+		fmt.Println(msgResult.Messages[0].Attributes)
+		fmt.Println(msgResult.Messages[0].Attributes)
+		fmt.Println(msgResult.Messages[0].Body)
+	}
+	*/
+	return "", nil
 	//fmt.Println("Message ID:     " + *msgResult.Messages[0].MessageId)
 	//fmt.Println("Message Handle: " + *msgResult.Messages[0].ReceiptHandle)
 }
-

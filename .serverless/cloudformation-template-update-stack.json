@@ -192,7 +192,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "__local__",
-          "S3Key": "/home/ayman/Documents/go-repos/testlocalstack"
+          "S3Key": "/Users/ayman/Documents/goRepos/testlocalstack"
         },
         "Handler": "/bin/publishsns",
         "Runtime": "go1.x",
@@ -222,7 +222,7 @@
       "Properties": {
         "Code": {
           "S3Bucket": "__local__",
-          "S3Key": "/home/ayman/Documents/go-repos/testlocalstack"
+          "S3Key": "/Users/ayman/Documents/goRepos/testlocalstack"
         },
         "Handler": "/bin/recivemsg",
         "Runtime": "go1.x",
@@ -270,7 +270,7 @@
     "PublisherEventsRuleSchedule1": {
       "Type": "AWS::Events::Rule",
       "Properties": {
-        "ScheduleExpression": "rate(0.5 minutes)",
+        "ScheduleExpression": "rate(1 minute)",
         "State": "ENABLED",
         "Targets": [
           {
@@ -299,43 +299,6 @@
         "SourceArn": {
           "Fn::GetAtt": [
             "PublisherEventsRuleSchedule1",
-            "Arn"
-          ]
-        }
-      }
-    },
-    "RecievemsgEventsRuleSchedule1": {
-      "Type": "AWS::Events::Rule",
-      "Properties": {
-        "ScheduleExpression": "rate(0.6 minutes)",
-        "State": "ENABLED",
-        "Targets": [
-          {
-            "Arn": {
-              "Fn::GetAtt": [
-                "RecievemsgLambdaFunction",
-                "Arn"
-              ]
-            },
-            "Id": "recievemsgSchedule"
-          }
-        ]
-      }
-    },
-    "RecievemsgLambdaPermissionEventsRuleSchedule1": {
-      "Type": "AWS::Lambda::Permission",
-      "Properties": {
-        "FunctionName": {
-          "Fn::GetAtt": [
-            "RecievemsgLambdaFunction",
-            "Arn"
-          ]
-        },
-        "Action": "lambda:InvokeFunction",
-        "Principal": "events.amazonaws.com",
-        "SourceArn": {
-          "Fn::GetAtt": [
-            "RecievemsgEventsRuleSchedule1",
             "Arn"
           ]
         }
@@ -381,27 +344,18 @@
     "ServerlessDeploymentBucketName": {
       "Value": {
         "Ref": "ServerlessDeploymentBucket"
-      },
-      "Export": {
-        "Name": "sls-publishsns-serverless-local-ServerlessDeploymentBucketName"
       }
     },
     "PublisherLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
         "Ref": "PublisherLambdaVersionn15QMvEJEUAh8dPCgrMrhfUTJGGUBDQ699fxHVw4nAk"
-      },
-      "Export": {
-        "Name": "sls-publishsns-serverless-local-PublisherLambdaFunctionQualifiedArn"
       }
     },
     "RecievemsgLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
         "Ref": "RecievemsgLambdaVersionUX2KcW2atuzE1Qsctm9dHyukqGM6F27ywlnsbOMyM"
-      },
-      "Export": {
-        "Name": "sls-publishsns-serverless-local-RecievemsgLambdaFunctionQualifiedArn"
       }
     }
   }

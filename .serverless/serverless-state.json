@@ -31,6 +31,7 @@
         "AWS_SECRET_ACCESS_KEY": "xxx",
         "AWS_REGION": "us-east-1"
       },
+      "variableSyntax": "\\${([^{}:]+?(?:\\(|:)(?:[^:{}][^{}]*?)?)}",
       "versionFunctions": true,
       "compiledCloudFormationTemplate": {
         "AWSTemplateFormatVersion": "2010-09-09",
@@ -218,7 +219,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "__local__",
-                "S3Key": "/home/ayman/Documents/go-repos/testlocalstack"
+                "S3Key": "/Users/ayman/Documents/goRepos/testlocalstack"
               },
               "Handler": "/bin/publishsns",
               "Runtime": "go1.x",
@@ -248,7 +249,7 @@
             "Properties": {
               "Code": {
                 "S3Bucket": "__local__",
-                "S3Key": "/home/ayman/Documents/go-repos/testlocalstack"
+                "S3Key": "/Users/ayman/Documents/goRepos/testlocalstack"
               },
               "Handler": "/bin/recivemsg",
               "Runtime": "go1.x",
@@ -296,7 +297,7 @@
           "PublisherEventsRuleSchedule1": {
             "Type": "AWS::Events::Rule",
             "Properties": {
-              "ScheduleExpression": "rate(0.5 minutes)",
+              "ScheduleExpression": "rate(1 minute)",
               "State": "ENABLED",
               "Targets": [
                 {
@@ -325,43 +326,6 @@
               "SourceArn": {
                 "Fn::GetAtt": [
                   "PublisherEventsRuleSchedule1",
-                  "Arn"
-                ]
-              }
-            }
-          },
-          "RecievemsgEventsRuleSchedule1": {
-            "Type": "AWS::Events::Rule",
-            "Properties": {
-              "ScheduleExpression": "rate(0.6 minutes)",
-              "State": "ENABLED",
-              "Targets": [
-                {
-                  "Arn": {
-                    "Fn::GetAtt": [
-                      "RecievemsgLambdaFunction",
-                      "Arn"
-                    ]
-                  },
-                  "Id": "recievemsgSchedule"
-                }
-              ]
-            }
-          },
-          "RecievemsgLambdaPermissionEventsRuleSchedule1": {
-            "Type": "AWS::Lambda::Permission",
-            "Properties": {
-              "FunctionName": {
-                "Fn::GetAtt": [
-                  "RecievemsgLambdaFunction",
-                  "Arn"
-                ]
-              },
-              "Action": "lambda:InvokeFunction",
-              "Principal": "events.amazonaws.com",
-              "SourceArn": {
-                "Fn::GetAtt": [
-                  "RecievemsgEventsRuleSchedule1",
                   "Arn"
                 ]
               }
@@ -407,27 +371,18 @@
           "ServerlessDeploymentBucketName": {
             "Value": {
               "Ref": "ServerlessDeploymentBucket"
-            },
-            "Export": {
-              "Name": "sls-publishsns-serverless-local-ServerlessDeploymentBucketName"
             }
           },
           "PublisherLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
               "Ref": "PublisherLambdaVersionn15QMvEJEUAh8dPCgrMrhfUTJGGUBDQ699fxHVw4nAk"
-            },
-            "Export": {
-              "Name": "sls-publishsns-serverless-local-PublisherLambdaFunctionQualifiedArn"
             }
           },
           "RecievemsgLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
               "Ref": "RecievemsgLambdaVersionUX2KcW2atuzE1Qsctm9dHyukqGM6F27ywlnsbOMyM"
-            },
-            "Export": {
-              "Name": "sls-publishsns-serverless-local-RecievemsgLambdaFunctionQualifiedArn"
             }
           }
         }
@@ -532,7 +487,6 @@
       }
     },
     "plugins": [
-      "serverless-offline",
       "serverless-localstack"
     ],
     "pluginsData": {},
@@ -541,12 +495,12 @@
         "handler": "/bin/publishsns",
         "events": [
           {
-            "schedule": "rate(0.5 minutes)"
+            "schedule": "rate(1 minute)"
           }
         ],
         "name": "publishsns-serverless-local-publisher",
         "package": {
-          "artifact": "/home/ayman/Documents/go-repos/testlocalstack/node_modules/serverless-localstack/src/index.js"
+          "artifact": "/Users/ayman/Documents/goRepos/testlocalstack/node_modules/serverless-localstack/src/index.js"
         },
         "memory": 1024,
         "timeout": 6,
@@ -558,9 +512,6 @@
         "handler": "/bin/recivemsg",
         "events": [
           {
-            "schedule": "rate(0.6 minutes)"
-          },
-          {
             "sqs": {
               "arn": {
                 "$ref": "$[\"service\"][\"provider\"][\"compiledCloudFormationTemplate\"][\"Resources\"][\"IamRoleLambdaExecution\"][\"Properties\"][\"Policies\"][0][\"PolicyDocument\"][\"Statement\"][3][\"Resource\"][0]"
@@ -570,7 +521,7 @@
         ],
         "name": "publishsns-serverless-local-recievemsg",
         "package": {
-          "artifact": "/home/ayman/Documents/go-repos/testlocalstack/node_modules/serverless-localstack/src/index.js"
+          "artifact": "/Users/ayman/Documents/goRepos/testlocalstack/node_modules/serverless-localstack/src/index.js"
         },
         "memory": 1024,
         "timeout": 6,
@@ -599,6 +550,7 @@
     },
     "configValidationMode": "warn",
     "serviceFilename": "serverless.yml",
+    "layers": {},
     "initialServerlessConfig": {
       "service": {
         "$ref": "$[\"service\"][\"serviceObject\"]"
@@ -620,7 +572,7 @@
         "include": [
           "./bin/**"
         ],
-        "artifactDirectoryName": "serverless/publishsns-serverless/local/1625507445433-2021-07-05T17:50:45.433Z"
+        "artifactDirectoryName": "serverless/publishsns-serverless/local/1625570409460-2021-07-06T11:20:09.460Z"
       },
       "functions": {
         "$ref": "$[\"service\"][\"functions\"]"
@@ -629,11 +581,10 @@
         "$ref": "$[\"service\"][\"resources\"]"
       }
     },
-    "layers": {},
     "isDashboardMonitoringPreconfigured": false
   },
   "package": {
-    "artifactDirectoryName": "serverless/publishsns-serverless/local/1625507445433-2021-07-05T17:50:45.433Z",
+    "artifactDirectoryName": "serverless/publishsns-serverless/local/1625570409460-2021-07-06T11:20:09.460Z",
     "artifact": ""
   }
 }
